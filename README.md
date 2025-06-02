@@ -1,9 +1,7 @@
-Member names:
+# Wavefrom engineering through an optical fiber
 
-Eise Zimmerman
-
-Carmen Poch
-
-Mikolaj Dembski
-
-Artin Mortezavy
+## Member names
+- Mikolaj Dembski
+- Artin Mortezavy
+- Carmen Poch
+- Eise Zimmerman
