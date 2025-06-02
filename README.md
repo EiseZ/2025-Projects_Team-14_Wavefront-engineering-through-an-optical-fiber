@@ -4,6 +4,6 @@ Eise Zimmerman
 
 Carmen Poch
 
-Mikolaj Dempski
+Mikolaj Dembski
 
 Artin Mortezavy
