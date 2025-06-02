@@ -2,4 +2,4 @@
 
 - 03-06-2025 9:30 op ARCNL
 - Vragen aan begeleider over labjournaar
-- EZ neemt HEMA labjournaar mee
+- EZ neemt HEMA labjournaal mee
