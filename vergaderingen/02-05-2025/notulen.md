@@ -29,7 +29,7 @@ Hopen morgen meer duidelijkheid te krijgen
 De vraag is: gaan we het referentie onderzoek nadoen, of gebruiken we eerder elementaire kennis
 CP denkt eerder een minder berekenende insteek te nemen dan practicum 1
 
-03-05-2025 9:30 op ARCNL
+03-06-2025 9:30 op ARCNL
 
 We bergijpen de rode draad van de paper, maar zijn onwetend over de details
 Vermoeden is dat de exacte kennis niet echt nodig is, eerder weten wat een toepassing van de optische vezels is
