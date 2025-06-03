@@ -4,7 +4,8 @@ The optical fiber consists of 2 parts: a core and a cladding. When light comes i
 
 -How does total internal reflection work
 Total internal reflection is the effect that none of the light is refracted through a second medium, but is completely reflected back into the first medium. This happens when the second medium has a lower refractive index than the first medium. For this effect to happen there must be a certain angle between the light and the surface. This is the so-called "critical angle."
-What is the difference between single-mode fiber(SMF) and multimode fiber(MMF)?
+
+-What is the difference between single-mode fiber(SMF) and multimode fiber(MMF)?
 Single-mode fibers are fibers where only one wavelength can go through at once. The light goes through the fiber in one straight line without bouncing off the walls of the core. The core (9 micrometer) is a lot smaller than the core of a multimode fiber(50+ micrometer). The multimode fiber can support multiple wavelengths at once. However, unlike in the SMF, the light beams are reflected a lot by the walls of the core. This means that there is a lot of dispersion and therefore the quality of the signal decreases. \\
 
 -What is the fiber mode?
