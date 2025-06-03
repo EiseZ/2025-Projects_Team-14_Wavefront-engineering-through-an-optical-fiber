@@ -21,4 +21,4 @@ The phase shift is not linearly dependend on the voltage of the pixels, thus the
 Because if the polarisation is not correct, the phase shift will not be as expected. It needs to be vertical in our case.
 
 ## How does phase modulation create a desired wavefront? (try sketching what a wavefront might look like before and after SLM modulation)
-By changes the fase per pixel of the beam, we can create a patter that changes the output images after the fiber by constructive and destructive interference. ![Wavefront SLM phase modulation sketch](wavefront-SLM-sketch.png)
+By changes the fase per pixel of the beam, we can create a patter that changes the output images after the fiber by constructive and destructive interference. ![Wavefront SLM phase modulation sketch](wavefront-SLM-sketch.jpeg)
