@@ -1,5 +1,5 @@
-Light propagation in Fibers
-How does light travel inside an optical fiber
+##Light propagation in Fibers
+#How does light travel inside an optical fiber
 The optical fiber consists of 2 parts: a core and a cladding. When light comes in it bounces back and forth between the walls of the core. The cladding surrounds the core. Because of the fact that the cladding has a lower refractive index than the core the light is contained within the the fiber. This is called internal reflection. This is because a part of the light could go though the walls of the core.
 
 -How does total internal reflection work
