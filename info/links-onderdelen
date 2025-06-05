@@ -1,0 +1,38 @@
+Links naar de onderdelen in de opstelling / belangrijkste waardes:
+
+- laser
+wavelength: 633 nm
+
+- lens 1
+focal length: 35 mm
+
+- lens 2
+focal lenth 200 mm
+
+- polerizer: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=711&pn=WPH10M-633
+
+- SLM: https://www.meadowlark.com/shop/slms/1920-x-1200-spatial-light-modulator/
+size: 1900x1200
+
+- objective 1: https://www.edmundoptics.com/p/olympus-pln-20x-objective/29223/#
+M: 20x
+NA: 0.40
+focal length: 9.00 mm
+dif limit: 7.9 micron
+
+- fiber
+core diam: 50 micron
+NA: 0.22
+dif limit: 1.43 micron
+
+- objective 2: https://www.edmundoptics.com/p/olympus-uplfln-40x-objective/29229/
+M: 40x
+NA: 0.75
+focal length: 4.50 mm
+dif limit: 4.22 micron
+
+- lens 3
+focal lenth: 100 mm
+
+- camera: https://www.baslerweb.com/en/shop/aca2040-120um/
+size: 2048x1536
