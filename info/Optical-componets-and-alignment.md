@@ -1,0 +1,1 @@
+1. how does a lens change direction or size of light? a lens with 2 refracting surfaces, such that the refractive index inside the lens does not equal the refractive index of air will bend light. We can see this in snell's law $ \frac{n_1}{n_2}=\frac{\sin{\theta_1}}{\sin{\theta_2}}$
