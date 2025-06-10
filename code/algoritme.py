@@ -22,14 +22,14 @@ padding_top = 200
 padding_bottom = 400
 padding_left = 520
 padding_right = 800
-padding_top = 300
+padding_top = 210 # 300
 padding_bottom = 450
 padding_left = 620
-padding_right = 900
+padding_right = 760 #900
 slm_b = lcd_b - padding_left - padding_right
 slm_h = lcd_h - padding_bottom - padding_top
 slm = np.empty((slm_h, slm_b)) # Vector van alle phasen van de pixels van de SLM
-segment_pixels = 30*30 # Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
+segment_pixels = 20*20 # Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
 segment_length = int(np.sqrt(segment_pixels))
 n_segments = (slm_b * slm_h) // segment_pixels
 print(n_segments)
@@ -138,7 +138,7 @@ s.save_phase()
 beeld = get_image()
 intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
 show_image(beeld, 0, 0, 0)
-camera.ExposureTime.SetValue(50)
+camera.ExposureTime.SetValue(90)
 beeld = get_image()
 intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
 show_image(beeld, 0, 0, 0)
