@@ -18,18 +18,18 @@ beeld_h = 1536
 beeld = np.empty((beeld_h, beeld_b)) # Vector van intensiteiten van het beeld per pixel
 lcd_b = s.shape[1]
 lcd_h = s.shape[0]
-padding_top = 200
-padding_bottom = 400
-padding_left = 520
-padding_right = 800
-padding_top = 230 # 210 # 300
-padding_bottom = 570 # 450
-padding_left = 620
-padding_right = 820 # 760 # 900
+#padding_top = 0
+#padding_bottom = 0
+#padding_left = 0
+#padding_right = 0
+padding_top = 0 #230 # 300
+padding_bottom = 200 # 450
+padding_left = 300
+padding_right = 300 # 760 # 900
 slm_b = lcd_b - padding_left - padding_right
 slm_h = lcd_h - padding_bottom - padding_top
 slm = np.empty((slm_h, slm_b)) # Vector van alle phasen van de pixels van de SLM
-segment_pixels = 16*16 #20*20 # Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
+segment_pixels = 100*100 #20*20 # Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
 segment_length = int(np.sqrt(segment_pixels))
 n_segments = (slm_b * slm_h) // segment_pixels
 print(n_segments)
@@ -53,6 +53,8 @@ converter = pylon.ImageFormatConverter()
 # Convert to OpenCV format
 converter.OutputPixelFormat = pylon.PixelType_Mono8
 converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+# maakt een matrix voor positie van de beam
+diff_mat=np.zeros((slm_h // segment_length, slm_b // segment_length))
 
 def padd_slm(slm):
     return np.pad(slm, ((padding_top, padding_bottom), (padding_left, padding_right)))
@@ -71,7 +73,7 @@ def get_image():
     camera.StopGrabbing()
     return img
 
-def show_image(img, seg_x, seg_y, phase):
+def show_image(img, seg_x, seg_y, phase, del_int_max):
     # A cicle mask to calculate the intensity at the beam
     w = beeld.shape[1]
     h = beeld.shape[0]
@@ -86,17 +88,26 @@ def show_image(img, seg_x, seg_y, phase):
     intensity_beeld = beeld.copy()
     intensity_beeld[~mask] = 0
     intensity = np.sum(intensity_beeld)
-    
-    fig, axes = plt.subplots(1, 2)
-    axes[0].matshow(img)
-    axes[0].set_xlim(800, 1200)
-    axes[0].set_ylim(600, 1000)
-    axes[0].set_title(f"x: {seg_x}, y: {seg_y}, phi: {phase:.3f}, i: {intensity:.5e}, r: {intensity / np.sum(beeld):.5e}")
-    axes[1].matshow(slm_segments_best_intensity)
-    #slm_map(axes[1][0])
+    diff_mat=diff(seg_x, seg_y, intensity_beeld,del_int_max)
+    fig, axes = plt.subplots(2, 2)
+    axes[0][0].matshow(img)
+    axes[0][0].set_xlim(800, 1200)
+    axes[0][0].set_ylim(600, 1000)
+    axes[0][0].set_title(f"x: {seg_x}, y: {seg_y}, phi: {phase:.3f}, i: {intensity:.5e}, r: {intensity / np.sum(beeld):.5e}")
+    axes[0][1].matshow(slm_segments_best_intensity)
+    axes[1][0].matshow(diff_mat)
     #s.plot(ax=axes[1][1])
     plt.show()
     return
+
+def diff(seg_row,seg_column,beeld,del_int_max):
+    del_int= beeld.copy() - ref_beeld_intensity
+    del_int[del_int<0]=0
+    del_int=np.sum(del_int)
+    if del_int_max < del_int:
+        del_int_max = del_int
+        diff_mat[seg_column][seg_row]=del_int_max
+    return diff_mat
 
 slm_mapping = np.zeros((slm_h // segment_length, slm_b // segment_length))
 oud_beeld = np.empty(beeld.shape)
@@ -122,11 +133,13 @@ def set_matrix(mat, val, from_x, to_x, from_y, to_y):
     return mat
 
 s.set_phase(padd_slm(slm), settle=True)
+ref_beeld_intensity=get_image()
 beeld = get_image()
 ref_intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
 if algoritm < 2:
     for seg_row in tqdm(range(0, slm_h // segment_length)): # Itereer over elk segment
         for seg_column in range(0, slm_b // segment_length):
+            del_int_max = 0
             best_phase = 0 # Beste phase nu bekend
             best_intensity = ref_intensity
             for phase in phases:
@@ -136,7 +149,7 @@ if algoritm < 2:
                 beeld = get_image()
                 beeld = beeld.astype(np.int64)
                 intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
-                show_image(beeld, seg_column, seg_row, phase)
+                show_image(beeld, seg_column, seg_row, phase,del_int_max)
                 if intensity > best_intensity: # Als de phase beter werkt, noteer dit dan, anders negeren we het
                     best_phase = phase
                     best_intensity = intensity
@@ -161,11 +174,11 @@ s.set_phase(padd_slm(slm_final), settle=True)
 s.save_phase()
 beeld = get_image()
 intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
-show_image(beeld, 0, 0, 0)
+show_image(beeld, 0, 0, 0,del_int_max)
 camera.ExposureTime.SetValue(70)
 beeld = get_image()
 intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
-show_image(beeld, 0, 0, 0)
+show_image(beeld, 0, 0, 0,del_int_max)
 plt.matshow(slm_segments_best_intensity)
 plt.show()
 s.plot()
