@@ -1,2 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/Carmen Poch/Documents/GitHub/2025-Projects_Team-14_Wavefront-engineering-through-an-optical-fiber/media/videos/test/480p15/partial_movie_files/CreateSquare/1185818338_419651202_223132457.mp4'
