@@ -248,6 +248,7 @@ if algorithm == 3:
 
         # Create colorbar
         cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+        cbar.ax.set_yticks([0, 10,50, 150, 300, 500, 800, 1200, 1700, 2300, 3000])
         cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
 
         ax.set_xticks(range(data.shape[1]), labels=col_labels,
