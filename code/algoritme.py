@@ -21,18 +21,18 @@ beeld_h = 1536
 beeld = np.empty((beeld_h, beeld_b)) # Vector van intensiteiten van het beeld per pixel
 lcd_b = s.shape[1]
 lcd_h = s.shape[0]
-padding_top = 102 #100
-padding_bottom = 452 #450
-padding_left = 522 #520
-padding_right = 752    #750
-#padding_top = 0 #230 # 300
-#padding_bottom = 200 # 450
-#padding_left = 300
-#padding_right = 300 # 760 # 900
+padding_top = 106 #100 #102 #106
+padding_bottom = 456 #450 #452 #456
+padding_left = 526 #520 #522 #526
+padding_right = 756 #750 #752 #756
+#padding_top = 100
+#padding_bottom = 450
+#padding_left = 520
+#padding_right = 750
 slm_b = lcd_b - padding_left - padding_right
 slm_h = lcd_h - padding_bottom - padding_top
 slm = np.empty((slm_h, slm_b)) # Vector van alle phasen van de pixels van de SLM
-segment_pixels = 19*19 #20*20 # Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
+segment_pixels = 29*29 # #29*29 #38*38 Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
 segment_length = int(np.sqrt(segment_pixels))
 n_segments = (slm_b * slm_h) // segment_pixels
 print(n_segments)
@@ -49,8 +49,11 @@ slm_final = np.empty((slm_h, slm_b))
 # Matrix voor intensiteitsverandring per segment
 diff_mat = np.zeros((slm_h // segment_length, slm_b // segment_length), dtype=np.uint64)
 
-phases = [np.pi] #[np.pi] #[(2*np.pi)/3, (4*np.pi)/3] [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ] [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4] # De phasen die we willen testen voor elk segment
-#phases = [np.pi / 2, 3/2 * np.pi, np.pi] [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ] [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4]
+#phases = [np.pi] #[np.pi] #[(2*np.pi)/3, (4*np.pi)/3] [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ] [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4] # De phasen die we willen testen voor elk segment
+#phases = [(np.pi)]
+#phases = [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4]
+#phases = [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ]
+phases = [(2*np.pi)/3, (4*np.pi)/3]
 
 camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
 camera.Open()
@@ -77,12 +80,26 @@ def get_image():
     camera.StopGrabbing()
     return img
 
+radius = 0
 def calc_power_ratio(beeld):
     # A cicle mask to calculate the intensity at the beam
     w = beeld.shape[1]
     h = beeld.shape[0]
-    radius = 7
+    i = 0
+    j = 0
+    k = 0
+    l = 0
+    while beeld[focus_y + i][focus_x] > beeld[focus_y][focus_x] * 0.135:
+        i += 1
+    while beeld[focus_y - j][focus_x] > beeld[focus_y][focus_x] * 0.135:
+        j += 1
+    while beeld[focus_y][focus_x + k] > beeld[focus_y][focus_x] * 0.135:
+        k += 1
+    while beeld[focus_y][focus_x - l] > beeld[focus_y][focus_x] * 0.135:
+        l += 1
+    radius = max(i,j,k,l)
     center = (focus_x, focus_y)
+    print(radius)
 
     Y, X = np.ogrid[:h, :w]
     dist_from_center = np.sqrt((X - center[0])**2 + (Y-center[1])**2)
@@ -195,28 +212,31 @@ if algoritm < 2:
 
 else:
     a = 1
-
+end_time = time.time()
 s.set_phase(padd_slm(slm_final), settle=True)
 s.save_phase()
 beeld = get_image()
-intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
-show_final_image(beeld, 0, 0, 0,del_int_max)
-camera.ExposureTime.SetValue(70)
+show_final_image(beeld, 0, 0, 0, del_int_max)
+
+exposure_time = 200
+camera.ExposureTime.SetValue(exposure_time)
 beeld = get_image()
-intensity = beeld[focus_y][focus_x] + beeld[focus_y - 1][focus_x] + beeld[focus_y + 1][focus_x] + beeld[focus_y - 1][focus_x - 1] + beeld[focus_y + 1][focus_x - 1]  + beeld[focus_y - 1][focus_x + 1] + beeld[focus_y + 1][focus_x + 1] + beeld[focus_y][focus_x - 1] + beeld[focus_y][focus_x + 1]
-show_final_image(beeld, 0, 0, 0,del_int_max)
-if beeld[focus_y][focus_x] > 250:
-    print("OVERBELICHT! We proberen 50")
-    camera.ExposureTime.SetValue(50)
+
+while np.any(beeld[focus_y-5:focus_y+5,focus_x-5:focus_x+5] >= 255):
+    print(f"OVERBELICHT! We proberen {exposure_time - 5}")
+    exposure_time -= 5
+    camera.ExposureTime.SetValue(exposure_time)
     beeld = get_image()
-    show_final_image(beeld, 0, 0, 0,del_int_max)
-    if beeld[focus_y][focus_x] > 250:
-        print("OVERBELICHT! We proberen 30")
-        camera.ExposureTime.SetValue(30)
-        beeld = get_image()
-        show_final_image(beeld, 0, 0, 0,del_int_max)
-        if beeld[focus_y][focus_x] > 250:
-            print("Nogsteeds OVERBELICHT! Probeer handmatig")
+    if exposure_time < 30:
+        exposure_time = 200
+        _ = input("Stop de nieuwe filter erop van 0.6")
+        continue
+
+new_focus_y, new_focus_x = np.unravel_index(np.argmax(beeld[focus_y-5:focus_y+5,focus_x-5:focus_x+5]), (10, 10))
+new_focus_y += focus_y - 5
+new_focus_x += focus_x - 5
+focus_y, focus_x = new_focus_y, new_focus_x
+show_final_image(beeld, 0, 0, 0, del_int_max)         
 
 plt.matshow(slm_segments_best_intensity)
 plt.show()
@@ -224,6 +244,7 @@ s.plot()
 plt.show()
 camera.Close()
 
-end_time = time.time()
+
 with open("last_result.txt", "w") as f:
     f.write(f"Number of segments: {n_segments}\nAmount of phases: {len(phases)}\nPower ratio: {calc_power_ratio(beeld)}\nTotal time: {end_time - start_time}")
+np.save("last_beeld", beeld)
