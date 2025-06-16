@@ -1,11 +1,16 @@
-1. opstelling uitleggen: 
-- laser laten zien en de speciaficaties tonen 
-- uitleg over hoe de eerste twee lensen magnificeren
-- polarisator laten zien en uiteleggen waarom dit gedaan is
-- slm laten zien en uitleggen wat deze doet, met een manim animatie laten zien wat er met de liquid crystals gebeurt.
-- objectief laten zien en uitleggen wat deze doet
-- mmf laten zien en uitleggen hoe licht hierdoor heen propageerd, met een manim animatie dat laat zien hoe licht er door heen gaat.
-- de camera laten zien en met een manim animatie laten zien hoe het spekal pattern veranderd als de phases worden aangepast (dus het vinden van een focal spot).
+# Script animatie
+1. opstelling uitleggen:
+- we beginnen met een foto van de opstelling die fade naar een diagram van de opstelling
+- zoom in op de optical fiber, manim animatie van hoe dit werkt + uitleg modes, en plaatje speckle pattern
+- uitleg over hoe het oculair het licht in en uit de fiber foccused
+- zoom in op de slm, manim animatie van hoe dit werkt + uitleg concept wavefront shaping, noem ook iets over de applicatie
+
+- Nu een doorloop van de hele opstelling:
+- begin met lensen, met een plaatje over hoe een 4f system werkt
+- vertel dat de polarisatie nodig is voor een goede werking van de slm
+- leg kort uit hoe de beamsplitter
+- de camera laten zien en speckel pattern veranderd als de phases worden aangepast (dus het vinden van een focal spot).
+
 2. Onderzoek uitleggen.
 - heel kort praten over wat we gedaan hebben
 - resultaten animeren met manim (plots ect....), over resultaten praten en een conclusie geven.
