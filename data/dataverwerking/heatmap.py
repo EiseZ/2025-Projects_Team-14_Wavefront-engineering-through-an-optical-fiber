@@ -277,21 +277,21 @@ if algorithm == 3:
     from matplotlib.colors import PowerNorm, Normalize  # <-- important
 
     phases = ["2", "3", "4", "5"]
-    segments = ["100", "300", "500",
-            "700", "900"]
+    segments = ["100", "289", "484",
+            "676", "900"]
 
     time = np.array([
         [103.10, 288.86, 482.78,  673.28,  895.31],
-        [165.62, 470.16, 791.73,  1098.36, 1000],
-        [227.13, 653.82, 1084.39, 1528.44, 1000],
-        [292.03, 840.75, 1404.38, 1952.23, 1000]
+        [165.62, 470.16, 791.73,  1098.36, 1452.65],
+        [227.13, 653.82, 1084.39, 1528.44, 2024.9],
+        [292.03, 840.75, 1404.38, 1952.23, 2606.25]
     ])
 
     power_ratio = np.array([
         [0.0164, 0.030,  0.0648, 0.0625, 0.1129],
-        [0.0310, 0.0998, 0.171,  0.193,  0.1],
-        [0.0399, 0.144,  0.151,  0.219,  0.1],
-        [0.0470, 0.144,  0.172,  0.193,  0.1]
+        [0.0310, 0.0998, 0.171,  0.193,  0.151],
+        [0.0399, 0.144,  0.151,  0.219,  0.222],
+        [0.0470, 0.144,  0.172,  0.193,  0.255]
     ])
 
     ratio = (power_ratio / time) * 1000
@@ -321,7 +321,7 @@ if algorithm == 3:
     norm_ratio = Normalize(vmin=(ratio.min() * 0.9), vmax=(ratio.max() * 1.1))
     im , cbar= heatmap_lmao(
         ratio, phases, segments, ax=ax,
-        cmap="rainbow", cbarlabel="Time - power ratio ratio * 100", norm=norm_ratio
+        cmap="rainbow", cbarlabel="Power ratio - time ratio ratio * 1000", norm=norm_ratio
     )
     fig.tight_layout()
     plt.show()
