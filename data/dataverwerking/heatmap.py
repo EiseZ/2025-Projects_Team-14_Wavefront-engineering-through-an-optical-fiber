@@ -236,7 +236,7 @@ if algorithm == 3:
     
 
     def heatmap_lmao(data, row_labels, col_labels, ax=None,
-                cbar_kw=None, cbarlabel="", **kwargs):
+                cbar_kw=None, cbarlabel="", time=False, **kwargs):
         if ax is None:
             ax = plt.gca()
 
@@ -245,10 +245,15 @@ if algorithm == 3:
 
         # Plot the heatmap
         im = ax.imshow(data, **kwargs)
+        for (i, j), z in np.ndenumerate(data):
+            if not time:
+                ax.text(j, i, '{:0.3f}'.format(z), ha='center', va='center', size="small")
+            else:
+                ax.text(j, i, '{:0.0f}'.format(z), ha='center', va='center', size="small")
 
         # Create colorbar
         cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
-        cbar.ax.set_yticks([0, 10,50, 150, 300, 500, 800, 1200, 1700, 2300, 3000])
+        #cbar.ax.set_yticks(np.geomspace(1, 3000, num=10))
         cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
 
         ax.set_xticks(range(data.shape[1]), labels=col_labels,
@@ -269,28 +274,54 @@ if algorithm == 3:
 
 
     # Main code
-    from matplotlib.colors import PowerNorm  # <-- important
+    from matplotlib.colors import PowerNorm, Normalize  # <-- important
 
     phases = ["2", "3", "4", "5"]
     segments = ["100", "300", "500",
-            "700", "900", "1100"]
+            "700", "900"]
 
     time = np.array([
-        [100, 150, 200, 350, 370, 400],
-        [210, 300, 370, 450, 600, 1000],
-        [500, 700, 1000, 1500, 2000, 2700],
-        [650, 1050, 1390, 1900, 2500, 3600]
+        [103.10, 288.86, 482.78,  673.28,  895.31],
+        [165.62, 470.16, 791.73,  1098.36, 1000],
+        [227.13, 653.82, 1084.39, 1528.44, 1000],
+        [292.03, 840.75, 1404.38, 1952.23, 1000]
     ])
 
+    power_ratio = np.array([
+        [0.0164, 0.030,  0.0648, 0.0625, 0.1129],
+        [0.0310, 0.0998, 0.171,  0.193,  0.1],
+        [0.0399, 0.144,  0.151,  0.219,  0.1],
+        [0.0470, 0.144,  0.172,  0.193,  0.1]
+    ])
+
+    ratio = (power_ratio / time) * 1000
+
     fig, ax = plt.subplots()
-
     # Use PowerNorm to emphasize lower values (gamma < 1)
-    norm = PowerNorm(gamma=0.35, vmin=0, vmax=(time.max()+ 100))
-
+    norm_time = PowerNorm(gamma=0.35, vmin=0, vmax=(time.max()+ 100))
     im , cbar= heatmap_lmao(
-        time, phases, segments, ax=ax,
-        cmap="rainbow", cbarlabel="Time in seconds", norm=norm
+        time, phases, segments, ax=ax, time=True,
+        cmap="rainbow", cbarlabel="Time in seconds", norm=norm_time
     )
+    fig.tight_layout()
+    plt.show()
 
+
+    fig, ax = plt.subplots()
+    norm_power_ratio = PowerNorm(gamma=0.35, vmin=0, vmax=(power_ratio.max() + 0.1))
+    im , cbar= heatmap_lmao(
+        power_ratio, phases, segments, ax=ax,
+        cmap="rainbow", cbarlabel="Power ratio", norm=norm_power_ratio
+    )
+    fig.tight_layout()
+    plt.show()
+
+
+    fig, ax = plt.subplots()
+    norm_ratio = Normalize(vmin=(ratio.min() * 0.9), vmax=(ratio.max() * 1.1))
+    im , cbar= heatmap_lmao(
+        ratio, phases, segments, ax=ax,
+        cmap="rainbow", cbarlabel="Time - power ratio ratio * 100", norm=norm_ratio
+    )
     fig.tight_layout()
     plt.show()
