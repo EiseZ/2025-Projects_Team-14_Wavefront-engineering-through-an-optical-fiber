@@ -1,0 +1,4 @@
+Number of segments: 900
+Amount of phases: 4
+Power ratio: 0.2552234116564555
+Total time: 2606.248596429825
