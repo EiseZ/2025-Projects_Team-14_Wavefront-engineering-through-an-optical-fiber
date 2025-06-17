@@ -11,9 +11,15 @@ class CreateRectangle(Scene):
         lb = Line(start = [-5,0,0], end = [1,0,0])
         lc = Line(start = [1,0,0], end = [-5,0,0])
         ld = Line(start = [-5,0,0], end = [-1,0,0])
-        le = Line(start = [-1,0,0], end = [1,0,0])
-        lf = Line(start = [1,0,0], end = [-1,0,0])
-        lg = Line(start = [1,0,0], end = [5,0,0])
+        le_1 = Line(start = [-1,-4/3,0], end = [1,-4/3,0])
+        lf_1 = Line(start = [1,-4/3,0], end = [-1,-4/3,0])
+        lg_1 = Line(start = [-1,-4/3,0], end = [-5,-4/3,0])
+        le_2= Line(start = [-1,0,0], end = [1,0,0])
+        lf_2 = Line(start = [1,0,0], end = [-1,0,0])
+        lg_2 = Line(start = [-1,0,0], end = [-5,0,0])
+        le_3 = Line(start = [-1,4/3,0], end = [1,4/3,0])
+        lf_3 = Line(start = [1,4/3,0], end = [-1,4/3,0])
+        lg_3 = Line(start = [-1,4/3,0], end = [-5,4/3,0])
         ellipse_1 = Ellipse(width=0.5, height=0.8, color= WHITE)
         ellipse_1.set_fill(color=WHITE, opacity=1)
         ellipse_1.move_to([-0.5, 1, 0])
@@ -41,22 +47,36 @@ class CreateRectangle(Scene):
         self.play(MoveAlongPath(l,lc))
         self.play(FadeOut(l))
         #Golven
-        self.play(Rotate(ellipse_1, angle= (1/6)*PI, about_point= [-0.5, 1, 0]))
-        self.play(Rotate(ellipse_2, angle= (1/6)*PI, about_point= [0.5, 1, 0]))
-        self.play(Rotate(ellipse_6, angle= (1/2)*PI, about_point= [-0.5, 0, 0]))
-        self.play(Rotate(ellipse_5, angle= (1/2)*PI, about_point= [0.5, 0, 0]))
-        self.play(Rotate(ellipse_3, angle= (3/8)*PI, about_point= [-0.5, -1, 0]))
-        self.play(Rotate(ellipse_4, angle= (3/8)*PI, about_point= [0.5, -1, 0]))
+        self.play((Rotate(ellipse_1, angle= (1/6)*PI, about_point= [-0.5, 1, 0])),
+                  (Rotate(ellipse_2, angle= (1/6)*PI, about_point= [0.5, 1, 0])))
+        
+        self.play((Rotate(ellipse_6, angle= (1/2)*PI, about_point= [-0.5, 0, 0])),
+                  (Rotate(ellipse_5, angle= (1/2)*PI, about_point= [0.5, 0, 0])))
+        
+        self.play((Rotate(ellipse_3, angle= (3/8)*PI, about_point= [-0.5, -1, 0])),
+                  (Rotate(ellipse_4, angle= (3/8)*PI, about_point= [0.5, -1, 0])))
         self.play(FadeIn(l))
         self.play(MoveAlongPath(l,ld ), rate_func=linear)
-        self.play(MoveAlongPath(l1,le ), rate_func=linear)
-        self.play(MoveAlongPath(l2,le ), rate_func=linear)
-        self.play(MoveAlongPath(l3,le ), rate_func=linear)
-        self.play(MoveAlongPath(l1,lf ), rate_func=linear)
-        self.play(MoveAlongPath(l2,lf ), rate_func=linear)
-        self.play(MoveAlongPath(l3,lf ), rate_func=linear)
-        self.play(MoveAlongPath(l1,lg ), rate_func=linear)
-        self.play(MoveAlongPath(l2,lg ), rate_func=linear)
-        self.play(MoveAlongPath(l3,lg ), rate_func=linear)
+        self.play(
+            Succession(
+                MoveAlongPath(l1,le_1 , rate_func=linear,run_time=1.3),
+                MoveAlongPath(l1,lf_1 , rate_func=linear,run_time=1.3),
+                MoveAlongPath(l1,lg_1 , rate_func=linear),
+                FadeOut(l1)
+                ),
+            
+            Succession(
+                MoveAlongPath(l2,le_2 , rate_func=linear,run_time=2),
+                MoveAlongPath(l2,lf_2 , rate_func=linear,run_time=2),
+                MoveAlongPath(l2,lg_2 , rate_func=linear),
+                FadeOut(l2)
+                ),
+            Succession(
+                MoveAlongPath(l3,le_3 , rate_func=linear,run_time=1.8),
+                MoveAlongPath(l3,lf_3 , rate_func=linear,run_time=1.8),
+                MoveAlongPath(l3,lg_3 , rate_func=linear),
+                FadeOut(l3)
+                ),
+            )
         
-        self.wait(2)
+        self.wait(1)
