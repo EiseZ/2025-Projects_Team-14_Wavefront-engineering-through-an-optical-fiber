@@ -21,10 +21,10 @@ beeld_h = 1536
 beeld = np.empty((beeld_h, beeld_b)) # Vector van intensiteiten van het beeld per pixel
 lcd_b = s.shape[1]
 lcd_h = s.shape[0]
-padding_top = 106 #100 #102 #106
-padding_bottom = 456 #450 #452 #456
-padding_left = 526 #520 #522 #526
-padding_right = 756 #750 #752 #756
+padding_top = 100 #100 #102 #106 #110
+padding_bottom = 450 #450 #452 #456 #460
+padding_left = 520 #520 #522 #526 #530
+padding_right = 750 #750 #752 #756 #760
 #padding_top = 100
 #padding_bottom = 450
 #padding_left = 520
@@ -32,7 +32,7 @@ padding_right = 756 #750 #752 #756
 slm_b = lcd_b - padding_left - padding_right
 slm_h = lcd_h - padding_bottom - padding_top
 slm = np.empty((slm_h, slm_b)) # Vector van alle phasen van de pixels van de SLM
-segment_pixels = 29*29 # #29*29 #38*38 Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
+segment_pixels =25*25 #25*25 #19*19 # #29*29 #38*38 #21*21 Aantal pixels in een segment, moet een kwadraat zijn en segment_length moet slm_b & slm_h delen
 segment_length = int(np.sqrt(segment_pixels))
 n_segments = (slm_b * slm_h) // segment_pixels
 print(n_segments)
@@ -51,9 +51,9 @@ diff_mat = np.zeros((slm_h // segment_length, slm_b // segment_length), dtype=np
 
 #phases = [np.pi] #[np.pi] #[(2*np.pi)/3, (4*np.pi)/3] [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ] [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4] # De phasen die we willen testen voor elk segment
 #phases = [(np.pi)]
-#phases = [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4]
+phases = [(2*np.pi)/4, (4*np.pi)/4,(6*np.pi)/4]
 #phases = [(2*np.pi)/5, (4*np.pi)/5,(6*np.pi)/5, (8*np.pi)/5 ]
-phases = [(2*np.pi)/3, (4*np.pi)/3]
+#phases = [(2*np.pi)/3, (4*np.pi)/3]
 
 camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
 camera.Open()
@@ -150,7 +150,7 @@ def diff(seg_row, seg_column, del_int_max):
     del_int = np.sum(del_int)
     if del_int > del_int_max:
         del_int_max = del_int
-        diff_mat[seg_column][seg_row] = del_int_max
+        diff_mat[seg_row][seg_column] = del_int_max
 
 slm_mapping = np.zeros((slm_h // segment_length, slm_b // segment_length))
 oud_beeld = np.empty(beeld.shape)
@@ -196,6 +196,7 @@ if algoritm < 2:
                 if intensity > best_intensity: # Als de phase beter werkt, noteer dit dan, anders negeren we het
                     best_phase = phase
                     best_intensity = intensity
+                np.save("speckle", beeld)
             # Sla de beste phase op
             slm_segments_best_phase[seg_row][seg_column] = best_phase
             slm_segments_best_intensity[seg_row][seg_column] = best_intensity
@@ -225,6 +226,7 @@ beeld = get_image()
 while np.any(beeld[focus_y-5:focus_y+5,focus_x-5:focus_x+5] >= 255):
     print(f"OVERBELICHT! We proberen {exposure_time - 5}")
     exposure_time -= 5
+    print(exposure_time)
     camera.ExposureTime.SetValue(exposure_time)
     beeld = get_image()
     if exposure_time < 30:

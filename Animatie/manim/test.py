@@ -1,102 +1,68 @@
 from manim import *
 
-scalar = 2
-
-class SLM(Scene):
+# <<<<<<< HEAD
+# =======
+class CreateCircleAndSquare(Scene):
     def construct(self):
-        # Create SLM screen
-        screen = Rectangle(width = (1.92 * scalar), height = (1.2 * scalar))
-        screen.set_stroke(color = "white", width = (2 * scalar))
-        self.wait()
-        self.play(Create(screen))
-        
-        # Zoom in
-        zoom = 2
-        self.play(screen.animate.scale(zoom))
-        self.wait()
+        circle = Circle()  # create a circle
+        circle.set_fill(GREEN, opacity= 1) # filling
+        circle.set_stroke(BLUE, opacity=1) # line
+        self.play(Create(circle)) # animate
+        self.clear() # delete circle
+        square = Square()  # create a square
+        square.set_fill(PINK, opacity= 1) # filling
+        square.set_stroke(RED, opacity=1) # line
+        self.play(Create(square)) # animate
 
-        # Compute scaled dimensions
-        width_scaled = 1.92 * scalar * zoom
-        height_scaled = 1.2 * scalar * zoom
+class FiberAnimation(Scene):
+    def construct(self):
+        outer_rect = Rectangle(width=10.0, height=2.5)
+        outer_rect.set_fill("#FFFFFF", opacity=1)
+        inner_rect = Rectangle(width=10.0, height=2.0)
+        inner_rect.set_fill("#B9D9EB", opacity=1)
+        fiber = Group(outer_rect, inner_rect)
 
-        # Make pixel grid
-        pixels = NumberPlane(
-            x_range=[-width_scaled / 2, width_scaled / 2, 0.05],  # 0.4 units per square
-            y_range=[-height_scaled / 2, height_scaled / 2, 0.05],
-            x_length=width_scaled,
-            y_length=height_scaled,
-            background_line_style={
-                "stroke_color": WHITE,
-                "stroke_width": 0.5,
-                "stroke_opacity": 0.5,})
-        
-        # Make center axes match the background lines
-        pixels.x_axis.set_stroke(color=WHITE, width=0.3, opacity = 0.4)
-        pixels.y_axis.set_stroke(color=WHITE, width=0.3, opacity = 0.4)
+        br1 = MathTex("n_1").move_to([4, -1.3, 0])
+        br2 = MathTex("n_2").move_to([4, -0.7, 0])
+        breq = MathTex("n_1 < n_2").move_to([4, -2.5, 0])
 
-        pixels.move_to(screen.get_center())
+        screen = Ellipse(width=1, height=2, color=GRAY)
+        screen.set_fill("#FFFFFF", opacity=1)
 
-        self.play(FadeIn(pixels))
-        self.wait()
+        setup = Group(fiber, screen).arrange(buff=2.0)
+    
 
-        # Make laser beam 
+        p1 = [-7, 0, 1]
+        p2 = [-5, 1, 1]
+        p3 = [-1, -1, 1]
+        p4 = [3, 1, 1]
+        p5 = [6, -0.5, 1]
+        laser1 = Line(p1, p2, color=RED).append_points(Line(p2, p3).points).append_points(Line(p3, p4).points).append_points(Line(p4, p5).points)
 
-        # Create translucent outer rings to simulate blur
-        laser = VGroup()  # Group for all blurry layers
-        for i in range(0, 15):
-            fade_circle = Circle(radius=1.0 + i * 0.02)
-            fade_circle.set_fill(color = "red", opacity=0.1)  # More transparent in outer layers
-            fade_circle.set_stroke(opacity=0)
-            laser.add(fade_circle)
+        p6 = [-8, -1, 1]
+        p7 = [-3, 1, 1]
+        p8 = [2, -1, 1]
+        p9 = [6, 0.6, 1]
+        laser2 = Line(p6, p7, color=RED).append_points(Line(p7, p8).points).append_points(Line(p8, p9).points)
 
-        # Fade in the whole "laser"
-        self.play(FadeIn(laser, run_time=2))
-        self.wait()
-
-        # Opdelen in segments
-        segments = NumberPlane(
-            x_range=[-width_scaled / 2, width_scaled / 2, 0.5],  # 0.4 units per square
-            y_range=[-height_scaled / 2, height_scaled / 2, 0.5],
-            x_length=width_scaled,
-            y_length=height_scaled,
-            background_line_style={
-                "stroke_color": WHITE,
-                "stroke_width": 1.5,
-                "stroke_opacity": 0.5,})
-        
-        # Make center axes match the background lines
-        segments.x_axis.set_stroke(color=WHITE, width=1.3, opacity = 0.3)
-        segments.y_axis.set_stroke(color=WHITE, width=1.3, opacity = 0.3)
-
-        segments.move_to(screen.get_center())
+        p10 = [-8, 1, 1]
+        p11 = [-3, -1, 1]
+        p12 = [2, 1, 1]
+        p13 = [6, -0.6, 1]
+        laser3 = Line(p10, p11, color=RED).append_points(Line(p11, p12).points).append_points(Line(p12, p13).points)
 
 
-        dim_pixels = NumberPlane(
-            x_range=[-width_scaled / 2, width_scaled / 2, 0.05],  # 0.4 units per square
-            y_range=[-height_scaled / 2, height_scaled / 2, 0.05],
-            x_length=width_scaled,
-            y_length=height_scaled,
-            background_line_style={
-                "stroke_color": WHITE,
-                "stroke_width": 0.5,
-                "stroke_opacity": 0.2,})
-        
-        # Make center axes match the background lines
-        dim_pixels.x_axis.set_stroke(color=WHITE, width=0.3, opacity = 0.15)
-        dim_pixels.y_axis.set_stroke(color=WHITE, width=0.3, opacity = 0.15)
+        self.play(FadeIn(fiber))
+        self.play(Write(br1))
+        self.play(Write(br2))
+        self.play(Write(breq))
+        self.play(FadeIn(screen))
+        self.play(Create(laser1))
+        self.play(Create(laser2))
+        self.play(Create(laser3))
+        # self.play(FadeOut(screen))
 
-        dim_pixels.move_to(screen.get_center())
-        dim_pixels.z_index = -1
-
-        self.play(FadeIn(segments))
-        self.wait()
-
-        # SLM window
-        window = Square(side_length = 3, stroke_width = 1)
-        window.move_to(screen.get_center())
-
-        not_window = Difference(screen, window, color = BLACK, fill_opacity = 0.5)
-        not_window.set_stroke(color = WHITE, width = 1)
-        self.play(FadeIn(window), FadeIn(not_window))
-        self.wait()
-
+        speckle = ImageMobject("./speckle.png").set_width(1)
+        Group(fiber, speckle).arrange(buff=2.0)
+        self.play(FadeTransform(screen, speckle))
+# >>>>>>> 467e44515f39fbc4b24b6571dd5ada284b8d237d
